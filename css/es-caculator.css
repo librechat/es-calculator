@@ -1,0 +1,134 @@
+.loading{
+	width: 100vw;
+	height: 100vh;
+	background-color: #FFFFFF; 
+}
+body{
+	overflow: hidden;
+}
+.table > tbody > tr > td {
+	vertical-align: middle;
+}
+.table{
+	margin: 0px;
+}
+caption{
+	border: 1px solid #ddd;
+	border-bottom: 0px;
+}
+.tablescroller-line{
+	height: 2px;
+}
+.tablescroller-body{
+	overflow-x:auto;
+	overflow-y:scroll;
+	display:block;
+	height: 55vh;
+	margin-right: -3px;
+}
+.tab-content>.active{
+	padding: 5px;
+}
+.inline-right{
+	display: inline-block;
+	float:right;
+	text-align: left;
+}
+.inline-left{
+	display: inline-block;
+	float:left;
+}
+.input-sm{
+	width:75%;
+	display: inline-block;
+	text-align: center;
+    border: none;
+    background: none;
+    box-shadow: none;
+}
+.red-bg{
+	background-color: #FFA3A0;
+}
+.blue-bg{
+	background-color: #99E1D9;
+}
+.yellow-bg{
+	background-color: #FFD670;
+}
+.gray-bg{
+	background-color: #DDDDDD;
+}
+.white-bg{
+	background-color: #FFFFFF;
+}
+.nav-tabs>li.active>a.red, .nav-tabs>li.active>a.red:hover, .nav-tabs>li.active>a.red:focus{
+	background-color:#FFA3A0;
+	border: 0px;
+}
+.nav-tabs>li>a.red:hover, .nav-tabs>li>a.red:focus{
+	background-color:#FFC6C4;
+	border: 0px;
+}
+.nav-tabs>li.active>a.blue, .nav-tabs>li.active>a.blue:hover, .nav-tabs>li.active>a.blue:focus{
+	background-color:#99E1D9;
+	border: 0px;
+}
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{
+	background-color:#DDDDDD;
+	border: 0px;
+}
+.nav-tabs>li>a.blue:hover, .nav-tabs>li>a.blue:focus{
+	background-color:#BDE9ED;
+	border: 0px;
+}
+.nav-tabs>li.active>a.yellow, .nav-tabs>li.active>a.yellow:hover, .nav-tabs>li.active>a.yellow:focus{
+	background-color:#FFD670;
+	border: 0px;
+}
+.nav-tabs>li>a.yellow:hover, .nav-tabs>li>a.yellow:focus{
+	background-color:#FEF6C9;
+	border: 0px;
+}
+.nav-tabs>li>a:hover, .nav-tabs>li>a:focus{
+	border: 0px;
+}
+.nav-tabs>li {
+    margin-bottom: -2px;
+}
+.nav-tabs{
+	border: 0px;
+}
+input, button{
+	outline:none !important;
+}
+.tablescroller-body::-webkit-scrollbar {
+	width: 3px;
+}
+.tablescroller-body::-webkit-scrollbar-track {
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+	margin:0px;
+	background: none;
+}
+.tablescroller-body::-webkit-scrollbar-thumb {
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background: #AAAAAA;
+}
+.tablescroller-body::-webkit-scrollbar:vertical:hover, .tablescroller-body::-webkit-scrollbar:vertical:active{
+	width: 5px;
+}
+.tablescroller-body::-webkit-scrollbar-thumb:vertical:hover, .tablescroller-body::-webkit-scrollbar-thumb:vertical:active{
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	background: #888888;
+}
+.custom-file-input{
+	display:none !important;
+}
+.custom-file-label{
+	background-color: buttonface;
+}
+.right-align{
+	float: right;
+}

@@ -1,0 +1,137 @@
+doctype html
+html
+	head
+		title ES Caculator
+		link(href="../include/css/bootstrap.min.css" rel="stylesheet")
+		link(href="../css/es-caculator.css" rel="stylesheet")
+		script(src="../include/js/jquery-3.2.1.min.js")
+		script(src="../include/js/bootstrap.min.js")
+		script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js")
+		script(src="../controller/es-caculator.js")
+	body(ng-app="ESCaculator")
+		.loading
+		.container
+			.page-header.text-center
+				h1 Ensemable Stars Caculator
+				.btn-group(role="group" aria-label="menu")
+					button.btn.btn-default(type="button") 說明書
+					button.btn.btn-default(type="button") 問題回報
+			div(ng-controller="CardGroup")
+				ul.nav.nav-tabs(role="tablist")
+					li.active(role="presentation")
+						a.red(href="#team" role="tab" data-toggle="tab" ng-click="changecolor('red')") 紅組
+					li(role="presentation")
+						a.blue(href="#team" role="tab" data-toggle="tab" ng-click="changecolor('blue')") 藍組
+					li(role="presentation")
+						a.yellow(href="#team" role="tab" data-toggle="tab" ng-click="changecolor('yellow')") 黃組
+					li(role="presentation")
+						a(href="#card" role="tab" data-toggle="tab" ng-click="changecolor('gray')") 我的卡片
+				.tab-content(ng-class="{'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg', 'gray': 'gray-bg'}[color]")
+					.tab-pane.active#team(role="tabpanel")
+						table.table.table-bordered.text-center.white-bg
+							caption.white-bg
+								h4 合計
+									span(ng-bind="teams[color][0].total+teams[color][1].total+teams[color][2].total")
+							tbody
+								tr(ng-repeat="team in teams[color]")
+									td.col-md-2
+										.team-total(ng-model="team.total")
+											span(ng-bind="team.total")
+										.skill-name(ng-model="team.skillname")
+											span(ng-bind="team.skillname")
+										.skill-buff(ng-model="team.skillbuff")
+											span(ng-bind="team.skillbuff")
+											span %
+									td.col-md-2(ng-repeat="member in team.members")
+										.row
+											.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
+												.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
+													label
+														input(type="checkbox" ng-model="member.event" ng-change="caculate()")
+														| 倍卡
+											.star.col-md-4(style="padding:1px;")
+												input.form-control.input-sm(ng-model="member.star" type="number" min="1" max="5" style="padding:1px")
+												span ★
+											.card-count.col-md-4(style="padding:1px;")
+												select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="caculate()" option-value)
+													option(value=0) 零破
+													option(value=1) 一破
+													option(value=2) 二破
+													option(value=3) 三破
+													option(value=4) 滿破
+										.character
+											select.form-control.input-sm(ng-model="member.character" type="text" ng-change="caculate()")
+												option(value="" disabled selected) 選擇角色
+												option(ng-repeat="character in characters") {{character}}
+										.card-name
+											span 【
+											input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
+											span  】
+										.value
+											input.form-control.input-sm(ng-model="member.value" type="number" min="0" ng-change="caculate()")
+					.tab-pane#card(role="tabpanel")
+						.tablescroller-head
+							table.table.table-bordered.text-center.white-bg
+								caption.white-bg 
+									.col-md-3
+										span 共有
+										input.form-control.input-sm#cardcount(ng-model="cardcount" type="number" min="15" max="500" ng-blur="changecardcount()")
+										span 張卡
+									.col-md-3
+									.col-md-6
+										.btn-group-sm.right-align(role="group" aria-label="cards-operation")
+											input.custom-file-input(type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload")
+											label.btn.btn-secondary.custom-file-label(for="uploadfile") 匯入
+											button.btn.btn-secondary(type="button" ng-click="download()") 匯出
+											button.btn.btn-secondary(type="button" ng-click="clear()") 清除
+											button.btn.btn-secondary(type="button" ng-click="autoarrangeall()") 自動組隊
+											select.form-control.input-sm(ng-model="groupstyle" type="text" style="width:130px;" option-value)
+												option(value=3 selected) 三組合計最大
+												option(value=2) 前兩組合計最大
+												option(value=1) 第一組最大
+								tbody
+									tr
+										td.col-md-1 編號
+										td.col-md-2 角色
+										td.col-md-2 卡片名稱
+										td.col-md-1 星級
+										td.col-md-1 突破
+										td.col-md-4 數值
+										td.col-md-1 活動倍卡
+						.tablescroller-line
+						.tablescroller-body
+							table.table.table-bordered.text-center.white-bg
+								tbody
+									tr(ng-repeat="card in cards")
+										td.col-md-1 {{card.id+1}}
+										td.col-md-2
+											select.form-control.input-sm(ng-model="card.character" type="text")
+												option(value="" disabled selected) 選擇角色
+												option(ng-repeat="character in characters") {{character}}
+										td.col-md-2
+											span 【
+											input.form-control.input-sm(ng-model="card.cardname" type="text" placeholder="卡片名稱")
+											span  】
+										td.col-md-1
+											input.form-control.input-sm(ng-model="card.star" type="number" min="1" max="5" style="padding:1px")
+											span ★
+										td.col-md-1
+											select.form-control.input-sm(style="padding:1px;" ng-model="card.dupe" option-value)
+												option(value=0) 零破
+												option(value=1) 一破
+												option(value=2) 二破
+												option(value=3) 三破
+												option(value=4) 滿破
+										td.col-md-4
+											.row
+												.col-md-4
+													input.form-control.input-sm.red-bg(ng-model="card.red" type="number" min="0")
+												.col-md-4
+													input.form-control.input-sm.blue-bg(ng-model="card.blue" type="number" min="0")
+												.col-md-4
+													input.form-control.input-sm.yellow-bg(ng-model="card.yellow" type="number" min="0")
+										td.col-md-1
+											.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
+												label
+													input(type="checkbox" ng-model="card.event")
+													| 倍卡
