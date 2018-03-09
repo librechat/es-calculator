@@ -355,29 +355,6 @@ app.controller("CardGroup", function($scope){
 			}
 		}
 	}
-	$scope.autoarrange_tmp = function(){
-		//to be removed
-		var teams, skill;
-		var cards = CopyByValue($scope.cards);
-		for(var i=0; i<colors.length; i++){
-			var color = colors[i];
-			console.log(color);
-			teams = CopyByValue($scope.teams[color]);
-			skill = CopyByValue($scope.skill[color]);
-			sort_cards(cards, color, 0, cards.length-1);
-			//put in 15 slots and caculate min by rule
-			console.log(cards);
-			var index = 0;
-			for(var j=0; j<3; j++){
-				for(var k=0; k<5; k++){
-					teams[j].members[k] = card_to_team(cards[index], color);
-					index++;
-				}
-			}
-			$scope.teams[color] = CopyByValue(teams);
-			$scope.caculate_color(color, $scope.teams[color], $scope.skill[color]);
-		}
-	}
 	$scope.autoarrangeall = function(){
 		//rule: T1 max, T2 max(1.5), T3 max(2)
 		var cards = CopyByValue($scope.cards);
@@ -395,7 +372,7 @@ app.controller("CardGroup", function($scope){
 		var skill = $scope.multiple_skill(color);
 		sort_cards(cards, color, 0, cards.length-1);
 		
-		//concept: max('紅月') = (max('蓮巳敬人')+max('鬼龍紅郎')+max('神崎颯馬')+max(A)+max(B)) * 10%
+		//concept: max('skill') = (sum(skill_members)+sum(others)) * (100+buff)%
 		var usedcards_index = [];
 		switch($scope.groupstyle){
 			case 1: {
@@ -414,7 +391,48 @@ app.controller("CardGroup", function($scope){
 				break;
 			}
 			case 3: {
-				$scope.teams[color] = arrange_three(color, cards, skill, $scope.skill[color], usedcards_index);
+				$scope.teams[color] = arrange_three(color, cards, skill, $scope.skill[color], usedcards_index,
+					(totals, max_values) => {
+						var sum = totals[0]+totals[1]+totals[2];
+						var max_total = max_values[0]+max_values[1]+max_values[2];
+						return sum > max_total;
+					}
+				);
+				break;
+			}
+			case 4: {
+				//smart arrange:
+				//3 team 50w > 2 team 33w > 1 team && max
+				$scope.teams[color] = arrange_three(color, cards, skill, $scope.skill[color], usedcards_index,
+					(totals, max_values) => {						
+						//3 team total > 50w
+						var sum_3 = totals[0]+totals[1]+totals[2];
+						var max_3 = max_values[0]+max_values[1]+max_values[2];
+						if(max_3 < 500000 || sum_3 < 500000) return sum_3 > max_3;
+						//both > 50w -> 2 team total > 33w
+						var sum_2 = totals[0]+totals[1];
+						var max_2 = max_values[0]+max_values[1];
+						if(max_2 < 333334 || sum_2 < 333334) return sum_2 > max_2;
+						//1 team max
+						return totals[0] > max_values[0];
+					}
+				);
+				break;
+			}
+			case 5: {
+				//3 team 50w > 2 team 33w && max
+				$scope.teams[color] = arrange_three(color, cards, skill, $scope.skill[color], usedcards_index,
+					(totals, max_values) => {						
+						//3 team total > 50w
+						var sum_3 = totals[0]+totals[1]+totals[2];
+						var max_3 = max_values[0]+max_values[1]+max_values[2];
+						if(max_3 < 500000 || sum_3 < 500000) return sum_3 > max_3;
+						//both > 50w -> 2 team total > 33w
+						var sum_2 = totals[0]+totals[1];
+						var max_2 = max_values[0]+max_values[1];
+						return sum_2 > max_2;
+					}
+				);
 				break;
 			}
 			default: break;
@@ -819,7 +837,7 @@ arrange_two = function(color, cards, skill, origin_skill, usedcards_index){
 	else console.log(ableteam2); //too many duplicate characters
 	return max_team;
 }
-arrange_three = function(color, cards, skill, origin_skill, usedcards_index){
+arrange_three = function(color, cards, skill, origin_skill, usedcards_index, evaluation){
 	//use ableteam and ableteam2 to build ableteam3
 	var ableteam = [];
 	skill.forEach(function(value){
@@ -977,22 +995,23 @@ arrange_three = function(color, cards, skill, origin_skill, usedcards_index){
 	//caculate total and choose max one
 	var max_total = -1;
 	var max_team = null;
+	var max_values = [-1,-1,-1];
+	var totals = [-1,-1,-1];
 	ableteam3.forEach(function(team){
-		var total_0 = caculate_total(team[0], origin_skill);
-		var total_1 = caculate_total(team[1], origin_skill);
-		var total_2 = caculate_total(team[2], origin_skill);
-		var sum = total_0 + total_1 + total_2;
-		if(sum > max_total){
-			max_total = sum;
+		totals[0] = caculate_total(team[0], origin_skill);
+		totals[1] = caculate_total(team[1], origin_skill);
+		totals[2] = caculate_total(team[2], origin_skill);
+		if(evaluation(totals, max_values)){
+			for(var i=0; i<3; i++) max_values[i] = totals[i];
 			//sort for total values
-			if(total_0 < total_1){
-				if(total_1 < total_2) team = [team[2], team[1], team[0]];
-				else if(total_2 < total_0) team = [team[1], team[0], team[2]];
+			if(totals[0] < totals[1]){
+				if(totals[1] < totals[2]) team = [team[2], team[1], team[0]];
+				else if(totals[2] < totals[0]) team = [team[1], team[0], team[2]];
 				else team = [team[1], team[2], team[0]];
 			}
 			else{ // 1 < 0
-				if(total_0 < total_2) team = [team[2], team[0], team[1]];
-				else if(total_2 < total_1);
+				if(totals[0] < totals[2]) team = [team[2], team[0], team[1]];
+				else if(totals[2] < totals[1]);
 				else team = [team[0], team[2], team[1]];
 			}
 			max_team = team;
