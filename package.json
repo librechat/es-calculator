@@ -1,0 +1,21 @@
+{
+  "name": "escalculator",
+  "version": "1.0.0",
+  "description": "https://librechat.github.io/es-calculator/view/index.html",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack controller/index.js controller/bundle.js",
+    "build:prod": "webpack controller/index.js controller/bundle.js -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/librechat/es-calculator.git"
+  },
+  "author": "librechat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/librechat/es-calculator/issues"
+  },
+  "homepage": "https://github.com/librechat/es-calculator#readme"
+}

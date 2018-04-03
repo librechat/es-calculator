@@ -13,8 +13,32 @@ body{
 	margin: 0px;
 }
 caption{
-	border: 1px solid #ddd;
+	border: 1px solid #DDD;
 	border-bottom: 0px;
+}
+.red-line > tbody > tr > td{
+	border-color: #FFA3A0;
+}
+.blue-line > tbody > tr > td{
+	border-color: #99E1D9;
+}
+.yellow-line > tbody > tr > td{
+	border-color: #FFD670;
+}
+.gray-line > caption{
+	border-color: #DDDDDD;
+}
+.red-line > caption{
+	border-color: #FFA3A0;
+}
+.blue-line > caption{
+	border-color: #99E1D9;
+}
+.yellow-line > caption{
+	border-color: #FFD670;
+}
+.gray-line > tbody > tr > td{
+	border-color: #DDDDDD;
 }
 .tablescroller-line{
 	height: 2px;
@@ -131,4 +155,41 @@ input, button{
 }
 .right-align{
 	float: right;
+}
+.small-alert{
+	padding: 8px;
+	margin: 0px;
+	margin-top: -50px;
+	display: none;
+}
+.modal-title{
+	text-align: left;
+}
+.content-li{
+	text-align: left;
+}
+.crowded-row{
+	margin: 0px;
+}
+.crowded-col{
+	padding: 0px !important;
+}
+.hidden{
+	display:none;
+}
+.wide{
+	width:95% !important;
+}
+.narrow{
+	width:40% !important;
+}
+.vertical-middle{
+	display: inline-block;
+	vertical-align: middle;
+}
+.vertical-middle::before{
+	height: 100%;
+	width: 0;
+	/*display: inline-block;*/
+	vertical-align: middle;
 }

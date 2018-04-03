@@ -1,2 +1,1 @@
-﻿#ignore jade files
-*.jade
+﻿node_modules/

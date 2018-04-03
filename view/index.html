@@ -7,16 +7,34 @@
     <script src="../include/js/jquery-3.2.1.min.js"></script>
     <script src="../include/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="../controller/es-calculator.js"></script>
+    <script src="../controller/bundle.js"></script>
   </head>
-  <body ng-app="ESCaculator">
+  <body ng-app="ESCalculator">
     <div class="loading"></div>
     <div class="container">
       <div class="page-header text-center">
         <h1>Ensemable Stars Calculator</h1>
         <div role="group" aria-label="menu" class="btn-group">
-          <button type="button" class="btn btn-default">說明書</button>
-          <button type="button" class="btn btn-default">問題回報</button>
+          <button type="button" data-toggle="modal" data-target="#help" class="btn btn-default">說明書</button><a type="button" target="_blank" href="https://goo.gl/forms/Usv78ddp3nhfGP9M2" class="btn btn-default">問題回報</a>
+        </div>
+        <div id="help" tabindex="-1" role="dialog" aria-labeledby="helpModal" aria-hidden="true" class="modal fade">
+          <div role="document" class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close">&times;</button>
+                <h4 class="modal-title">使用說明</h4>
+              </div>
+              <div class="modal-body">
+                <ol>
+                  <li class="content-li">組隊區(紅組、黃組、藍組)可以自由設定隊員</li>
+                  <li class="content-li">"我的卡片"可以填入自己的卡片</li>
+                  <li class="content-li">按自動組隊之後組好的三色隊伍會顯示在各自的組隊區</li>
+                  <li class="content-li">填好的卡片可以按匯出存成txt檔，下次按匯入就可以讀取之前的卡片記錄</li>
+                  <li class="content-li"> <b>聰明組隊尚在測試中，且不會考慮偷渡情形</b></li>
+                </ol>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div ng-controller="CardGroup">
@@ -28,9 +46,14 @@
         </ul>
         <div ng-class="{'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg', 'gray': 'gray-bg'}[color]" class="tab-content">
           <div id="team" role="tabpanel" class="tab-pane active">
-            <table class="table table-bordered text-center white-bg">
+            <table ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]" class="table table-bordered text-center white-bg">
               <caption class="white-bg">
-                <h4>合計<span ng-bind="teams[color][0].total+teams[color][1].total+teams[color][2].total"></span></h4>
+                <div class="col-md-3"><span>三隊合計 </span><span class="glyphicon glyphicon-hand-right"></span><span> </span>
+                  <input placeholder="{{teams[color][0].total+teams[color][1].total+teams[color][2].total}}" disabled class="form-control narrow input-sm">
+                </div>
+                <div class="col-md-3"><span>前二隊合計 </span><span class="glyphicon glyphicon-hand-right"></span><span> </span>
+                  <input placeholder="{{teams[color][0].total+teams[color][1].total}}" disabled class="form-control narrow input-sm">
+                </div>
               </caption>
               <tbody>
                 <tr ng-repeat="team in teams[color]">
@@ -44,7 +67,7 @@
                       <div style="padding: 1px;  line-height:30px;" class="buff-card col-md-4">
                         <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
                           <label>
-                            <input type="checkbox" ng-model="member.event" ng-change="caculate()">倍卡
+                            <input type="checkbox" ng-model="member.event" ng-change="calculate()">倍卡
                           </label>
                         </div>
                       </div>
@@ -52,7 +75,7 @@
                         <input ng-model="member.star" type="number" min="1" max="5" style="padding:1px" class="form-control input-sm"><span>★</span>
                       </div>
                       <div style="padding:1px;" class="card-count col-md-4">
-                        <select style="padding:1px;" ng-model="member.dupe" ng-change="caculate()" option-value class="form-control input-sm">
+                        <select style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value class="form-control input-sm">
                           <option value="0">零破</option>
                           <option value="1">一破</option>
                           <option value="2">二破</option>
@@ -62,7 +85,7 @@
                       </div>
                     </div>
                     <div class="character">
-                      <select ng-model="member.character" type="text" ng-change="caculate()" class="form-control input-sm">
+                      <select ng-model="member.character" type="text" ng-change="calculate()" class="form-control input-sm">
                         <option value="" disabled selected>選擇角色</option>
                         <option ng-repeat="character in characters">{{character}}</option>
                       </select>
@@ -70,8 +93,14 @@
                     <div class="card-name"><span>【</span>
                       <input ng-model="member.cardname" type="text" placeholder="卡片名稱" class="form-control input-sm"><span> 】</span>
                     </div>
-                    <div class="value">
-                      <input ng-model="member.value" type="number" min="0" ng-change="caculate()" class="form-control input-sm">
+                    <div class="row crowded-row">
+                      <div ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]" class="value">
+                        <input ng-model="member.value" type="number" min="0" ng-change="calculate()" class="form-control wide input-sm">
+                      </div>
+                      <div ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]" class="value"><span class="glyphicon glyphicon-arrow-right vertical-middle"></span></div>
+                      <div ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]" class="value">
+                        <input placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled class="form-control wide input-sm">
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -79,16 +108,20 @@
             </table>
           </div>
           <div id="card" role="tabpanel" class="tab-pane">
+            <div id="arrangealert" role="alert" class="alert alert-danger right-align small-alert">{{warning_msg}}</div>
             <div class="tablescroller-head">
               <table class="table table-bordered text-center white-bg">
                 <caption class="white-bg"> 
                   <div class="col-md-3"><span>共有</span>
-                    <input id="cardcount" ng-model="cardcount" type="number" min="15" max="500" ng-blur="changecardcount()" class="form-control input-sm"><span>張卡</span>
+                    <input id="cardcount" ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()" class="form-control input-sm"><span>張卡</span>
                   </div>
-                  <div class="col-md-3"></div>
-                  <div class="col-md-6">
+                  <div class="col-md-9">
                     <div role="group" aria-label="cards-operation" class="btn-group-sm right-align">
-                      <input type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload" class="custom-file-input">
+                      <select type="text" style="width:400px;" class="form-control input-sm">
+                        <option value="" selected>無卡池技能</option>
+                        <option ng-repeat="skill in activeskill">{{skill.describe}}</option>
+                      </select>
+                      <input name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload" class="custom-file-input">
                       <label for="uploadfile" class="btn btn-secondary custom-file-label">匯入</label>
                       <button type="button" ng-click="download()" class="btn btn-secondary">匯出</button>
                       <button type="button" ng-click="clear()" class="btn btn-secondary">清除</button>
@@ -98,7 +131,8 @@
                         <option value="2">前兩組合計最大</option>
                         <option value="1">第一組最大</option>
                         <option value="4">聰明組隊-特大</option>
-                        <option value="5">聰明組隊-緊急</option>
+                        <option value="5">聰明組隊-後特</option>
+                        <option value="6">聰明組隊-緊急</option>
                       </select>
                     </div>
                   </div>
@@ -110,8 +144,9 @@
                     <td class="col-md-2">卡片名稱</td>
                     <td class="col-md-1">星級</td>
                     <td class="col-md-1">突破</td>
-                    <td class="col-md-4">數值</td>
+                    <td class="col-md-3">數值</td>
                     <td class="col-md-1">活動倍卡</td>
+                    <td class="col-md-1">編輯</td>
                   </tr>
                 </tbody>
               </table>
@@ -120,8 +155,8 @@
             <div class="tablescroller-body">
               <table class="table table-bordered text-center white-bg">
                 <tbody>
-                  <tr ng-repeat="card in cards">
-                    <td class="col-md-1">{{card.id+1}}</td>
+                  <tr ng-repeat="card in cards track by $index">
+                    <td class="col-md-1">{{$index+1}}</td>
                     <td class="col-md-2">
                       <select ng-model="card.character" type="text" class="form-control input-sm">
                         <option value="" disabled selected>選擇角色</option>
@@ -143,16 +178,16 @@
                         <option value="4">滿破</option>
                       </select>
                     </td>
-                    <td class="col-md-4">
-                      <div class="row">
-                        <div class="col-md-4">
-                          <input ng-model="card.red" type="number" min="0" class="form-control input-sm red-bg">
+                    <td class="col-md-3">
+                      <div class="row crowded-row">
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="card.red" type="number" min="0" class="form-control wide input-sm red-bg">
                         </div>
-                        <div class="col-md-4">
-                          <input ng-model="card.blue" type="number" min="0" class="form-control input-sm blue-bg">
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="card.blue" type="number" min="0" class="form-control wide input-sm blue-bg">
                         </div>
-                        <div class="col-md-4">
-                          <input ng-model="card.yellow" type="number" min="0" class="form-control input-sm yellow-bg">
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="card.yellow" type="number" min="0" class="form-control wide input-sm yellow-bg">
                         </div>
                       </div>
                     </td>
@@ -161,6 +196,13 @@
                         <label>
                           <input type="checkbox" ng-model="card.event">倍卡
                         </label>
+                      </div>
+                    </td>
+                    <td class="col-md-1 crowded-col">
+                      <div class="btn-group">
+                        <button type="button" ng-click="addcard($index, true)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" ng-click="addcard($index, false)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-paste"></span></button>
+                        <button type="button" ng-click="removecard($index)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>
                       </div>
                     </td>
                   </tr>
