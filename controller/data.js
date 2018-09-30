@@ -182,15 +182,6 @@ const yellowskill = [
 		members: ['仙石忍']
 	}
 ];
-const activeskill = [
-	{
-		name: 'FruitsParlor',
-		buff: 13,
-		members: ['朱櫻司','天滿光','葵裕太','鳴上嵐'],
-		color: 'yellow',
-		describe: 'FruitsParlor 黃+13% '+'[ 朱櫻司 + '+'天滿光 + '+'葵裕太 + '+'鳴上嵐 ]'
-	}
-];
 module.exports = {
 	characters,
 	redskill,

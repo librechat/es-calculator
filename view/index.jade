@@ -12,7 +12,10 @@ html
 		.loading
 		.container
 			.page-header.text-center
-				h1 Ensemable Stars Calculator
+				h1 Ensemble Stars Calculator
+				h5 *非穩定版本，可能有bug，結果僅供參考*
+				h5 *建議使用電腦瀏覽器*
+				h5 *尚無卡池技能判定*
 				.btn-group(role="group" aria-label="menu")
 					button.btn.btn-default(type="button" data-toggle="modal" data-target="#help") 說明書
 					a.btn.btn-default(type="button" target="_blank" href="https://goo.gl/forms/Usv78ddp3nhfGP9M2") 問題回報
@@ -24,104 +27,42 @@ html
 								h4.modal-title 使用說明
 							.modal-body
 								ol
-									li.content-li 組隊區(紅組、黃組、藍組)可以自由設定隊員
 									li.content-li "我的卡片"可以填入自己的卡片
+									li.content-li 組隊區(紅組、黃組、藍組)可以自由設定隊員
 									li.content-li 按自動組隊之後組好的三色隊伍會顯示在各自的組隊區
 									li.content-li 填好的卡片可以按匯出存成txt檔，下次按匯入就可以讀取之前的卡片記錄
-									li.content-li 
-										b 聰明組隊尚在測試中，且不會考慮偷渡情形
 			div(ng-controller="CardGroup")
 				ul.nav.nav-tabs(role="tablist")
 					li.active(role="presentation")
+						a(href="#card" role="tab" data-toggle="tab" ng-click="changecolor('gray')") 我的卡片
+					li(role="presentation")
 						a.red(href="#team" role="tab" data-toggle="tab" ng-click="changecolor('red')") 紅組
 					li(role="presentation")
 						a.blue(href="#team" role="tab" data-toggle="tab" ng-click="changecolor('blue')") 藍組
 					li(role="presentation")
 						a.yellow(href="#team" role="tab" data-toggle="tab" ng-click="changecolor('yellow')") 黃組
-					li(role="presentation")
-						a(href="#card" role="tab" data-toggle="tab" ng-click="changecolor('gray')") 我的卡片
-				.tab-content(ng-class="{'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg', 'gray': 'gray-bg'}[color]")
-					.tab-pane.active#team(role="tabpanel")
-						table.table.table-bordered.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
-							caption.white-bg
-								.col-md-3
-									span 三隊合計 
-									span.glyphicon.glyphicon-hand-right
-									span 
-									input.form-control.narrow.input-sm(placeholder="{{teams[color][0].total+teams[color][1].total+teams[color][2].total}}" disabled)
-								.col-md-3
-									span 前二隊合計 
-									span.glyphicon.glyphicon-hand-right
-									span 
-									input.form-control.narrow.input-sm(placeholder="{{teams[color][0].total+teams[color][1].total}}" disabled)
-							tbody
-								tr(ng-repeat="team in teams[color]")
-									td.col-md-2
-										.team-total(ng-model="team.total")
-											span(ng-bind="team.total")
-										.skill-name(ng-model="team.skillname")
-											span(ng-bind="team.skillname")
-										.skill-buff(ng-model="team.skillbuff")
-											span(ng-bind="team.skillbuff")
-											span %
-									td.col-md-2(ng-repeat="member in team.members")
-										.row
-											.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
-												.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
-													label
-														input(type="checkbox" ng-model="member.event" ng-change="calculate()")
-														| 倍卡
-											.star.col-md-4(style="padding:1px;")
-												input.form-control.input-sm(ng-model="member.star" type="number" min="1" max="5" style="padding:1px")
-												span ★
-											.card-count.col-md-4(style="padding:1px;")
-												select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value)
-													option(value=0) 零破
-													option(value=1) 一破
-													option(value=2) 二破
-													option(value=3) 三破
-													option(value=4) 滿破
-										.character
-											select.form-control.input-sm(ng-model="member.character" type="text" ng-change="calculate()")
-												option(value="" disabled selected) 選擇角色
-												option(ng-repeat="character in characters") {{character}}
-										.card-name
-											span 【
-											input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
-											span  】
-										.row.crowded-row
-											.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]")
-												input.form-control.wide.input-sm(ng-model="member.value" type="number" min="0" ng-change="calculate()")
-											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]")
-												span.glyphicon.glyphicon-arrow-right.vertical-middle
-											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
-												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)
-					.tab-pane#card(role="tabpanel")
+				.tab-content(ng-class="{'gray': 'gray-bg', 'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg'}[color]")
+					.tab-pane.active#card(role="tabpanel")
 						.alert.alert-danger.right-align.small-alert#arrangealert(role="alert") {{warning_msg}}
 						.tablescroller-head
 							table.table.table-bordered.text-center.white-bg
 								caption.white-bg 
-									.col-md-3
+									.col-md-2
 										span 共有
-										input.form-control.input-sm#cardcount(ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()")
+										input.form-control.input-sm#cardcount(ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()" style="width:80px;")
 										span 張卡
-									.col-md-9
+									.col-md-6
+									.col-md-4
 										.btn-group-sm.right-align(role="group" aria-label="cards-operation")
-											select.form-control.input-sm(type="text" style="width:400px;")
-												option(value="" selected) 無卡池技能
-												option(ng-repeat="skill in activeskill") {{skill.describe}}
 											input.custom-file-input(name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload")
 											label.btn.btn-secondary.custom-file-label(for="uploadfile") 匯入
 											button.btn.btn-secondary(type="button" ng-click="download()") 匯出
 											button.btn.btn-secondary(type="button" ng-click="clear()") 清除
 											button.btn.btn-secondary(type="button" ng-click="autoarrangeall()") 自動組隊
-											select.form-control.input-sm(ng-model="groupstyle" type="text" style="width:130px;" option-value)
+											select.form-control.input-sm(ng-model="groupstyle" type="text" style="width:120px;" option-value)
 												option(value=3 selected) 三組合計最大
 												option(value=2) 前兩組合計最大
 												option(value=1) 第一組最大
-												option(value=4) 聰明組隊-特大
-												option(value=5) 聰明組隊-後特
-												option(value=6) 聰明組隊-緊急
 								tbody
 									tr
 										td.col-md-1 編號
@@ -133,7 +74,7 @@ html
 										td.col-md-1 活動倍卡
 										td.col-md-1 編輯
 						.tablescroller-line
-						.tablescroller-body
+						.tablescroller-head
 							table.table.table-bordered.text-center.white-bg
 								tbody
 									tr(ng-repeat="card in cards track by $index")
@@ -177,3 +118,59 @@ html
 													span.glyphicon.glyphicon-paste
 												button(type="button" ng-click="removecard($index)").btn.btn-default.btn-xs
 													span.glyphicon.glyphicon-minus
+					.tab-pane#team(role="tabpanel")
+						table.table.table-bordered.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
+							tbody
+								tr
+									td.col-md-1
+										span 三隊合計
+									td.col-md-1
+										span {{teams[color][0].total+teams[color][1].total+teams[color][2].total}}
+									td.col-md-1
+										span 前二合計 
+									td.col-md-1
+										span {{teams[color][0].total+teams[color][1].total}}
+									td.col-md-8
+						table.table.table-bordered.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
+							tbody
+								tr(ng-repeat="team in teams[color]")
+									td.col-md-2
+										.team-total(ng-model="team.total")
+											span(ng-bind="team.total")
+										.skill-name(ng-model="team.skillname")
+											span(ng-bind="team.skillname")
+										.skill-buff(ng-model="team.skillbuff")
+											span(ng-bind="team.skillbuff")
+											span %
+									td.col-md-2(ng-repeat="member in team.members")
+										.row
+											.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
+												.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
+													label
+														input(type="checkbox" ng-model="member.event" ng-change="calculate()")
+														| 倍卡
+											.star.col-md-4(style="padding:1px;")
+												input.form-control.input-sm(ng-model="member.star" type="number" min="1" max="5" style="padding:1px")
+												span ★
+											.card-count.col-md-4(style="padding:1px;")
+												select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value)
+													option(value=0) 零破
+													option(value=1) 一破
+													option(value=2) 二破
+													option(value=3) 三破
+													option(value=4) 滿破
+										.character
+											select.form-control.input-sm(ng-model="member.character" type="text" ng-change="calculate()")
+												option(value="" disabled selected) 選擇角色
+												option(ng-repeat="character in characters") {{character}}
+										.card-name
+											span 【
+											input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
+											span  】
+										.row.crowded-row
+											.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]")
+												input.form-control.wide.input-sm(ng-model="member.value" type="number" min="0" ng-change="calculate()")
+											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]")
+												span.glyphicon.glyphicon-arrow-right.vertical-middle
+											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
+												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)

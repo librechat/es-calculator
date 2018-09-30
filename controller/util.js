@@ -26,7 +26,7 @@ const team_template = {
 };
 const colors = ['red', 'blue', 'yellow'];
 const warning = {
-    count: '至少要有15張卡',
+    count: '至少要有15張卡才能使用組隊功能',
     character_count: '重複角色太多',
     empty_character: '不能有空白角色',
     illegal_cardfile: '卡組資料格式錯誤',

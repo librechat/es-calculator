@@ -18,14 +18,21 @@ app.controller("CardGroup", ["$scope", function($scope){
 
 	$scope.teams = {'red': $scope.redteams, 'blue': $scope.blueteams, 'yellow': $scope.yellowteams};
 	$scope.skill = {};
-	$scope.color = 'red';
+	$scope.color = 'gray';
 	$scope.cardcount = 15;
 	$scope.groupstyle = 3;
 	$scope.warning_msg = "";
-	$scope.activeskill = [];
+	
+	$scope.activeskill = {
+		skillname: "卡池技能",
+		skillbuff: 0,
+		members: []
+	};
 
 	$scope.init = function(){
-		console.log("init");
+		//console.log("init");
+		console.log("INITTTT");
+		console.log($scope.color);
 		reader.onload = (function(file){
 			return function(event){
 				var data_string = event.target.result;
@@ -79,8 +86,9 @@ app.controller("CardGroup", ["$scope", function($scope){
 		$scope.redskill = data.redskill;
 		$scope.blueskill = data.blueskill;
 		$scope.yellowskill = data.yellowskill;
-		//$scope.activeskill = data.activeskill;
-		$scope.activeskill = [];
+		$scope.activeskill = {
+			members
+		};
 		$scope.skill = {'red': $scope.redskill, 'blue': $scope.blueskill, 'yellow': $scope.yellowskill};
 	}
 

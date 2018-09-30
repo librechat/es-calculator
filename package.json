@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/librechat/es-calculator/issues"
   },
-  "homepage": "https://github.com/librechat/es-calculator#readme"
+  "homepage": "https://github.com/librechat/es-calculator#readme",
+  "devDependencies": {
+    "webpack-cli": "^3.1.1"
+  }
 }
